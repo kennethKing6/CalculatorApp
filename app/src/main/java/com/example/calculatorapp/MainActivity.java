@@ -16,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     TextView workoutTextView;
     TextView resultTextView;
+    private boolean hasCalculated;
 
 
     @Override
@@ -24,12 +25,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         workoutTextView = findViewById(R.id.work_out_text_view);
         resultTextView = findViewById(R.id.results_text_view);
+        hasCalculated = false;
     }
 
     public void displayNumber(View view) {
-        if (workoutTextView.getText().toString().charAt(0) == '0'){
+        if (workoutTextView.getText().toString().charAt(0) == '0' || hasCalculated) {
             workoutTextView.setText(((TextView) view).getText().toString());
-        }else {
+            hasCalculated = false;
+        } else {
+
             workoutTextView.append(((TextView) view).getText().toString());
 
         }
@@ -43,21 +47,28 @@ public class MainActivity extends AppCompatActivity {
         String workout = workoutTextView.getText().toString();
 
         char lastChar = workout.charAt(workout.length() - 1);
-        char charBeforeLast = workout.charAt(workout.length() - 2);
         Log.e(TAG, "last char " + lastChar);
 
-        if (isSymbol(lastChar) && isSymbol(lastChar)) {
+        if (isSymbol(lastChar)) {
+
+            StringBuilder sb = new StringBuilder(workout);
 
 
-            resultTextView.setText(doTheMathOperation(workoutTextView.getText().toString()));
-            Log.e(TAG, "the operation was made "+workoutTextView.getText().toString());
+            resultTextView.setText(doTheMathOperation(sb.deleteCharAt(workout.length() - 1).toString()));
+            Log.e(TAG, "the operation was made " + workoutTextView.getText().toString());
             //Delete everything from the workoutTextview and show the result in resultTextView
-            workoutTextView.setText(getString(R.string.initial_value));
+            workoutTextView.setText(sb.toString());
 
         } else {
-            if (!workoutTextView.getText().toString().isEmpty())
-                workoutTextView.append(symbol);
-            else
+            if (!workoutTextView.getText().toString().isEmpty()) {
+                if (!hasCalculated)
+                    workoutTextView.append(symbol);
+                else {
+                    workoutTextView.setText(getString(R.string.initial_value));
+                    hasCalculated = false;
+                }
+
+            } else
                 Toast.makeText(this, "\u0247", Toast.LENGTH_SHORT).show();
 
         }
@@ -92,14 +103,28 @@ public class MainActivity extends AppCompatActivity {
     private String doTheMathOperation(String userInput) {
         String operation = userInput;
         String result = null;
-        while (userInput.contains("*") || userInput.contains("/")) {
+        while (operation.contains("*") || operation.contains("/")) {
             operation = CalculatorOperation.deconstructHPrecedence(operation);
+            Log.e(TAG, "current operation " + operation);
         }
 
-        while (userInput.contains("+") || userInput.contains("-")) {
-            operation = CalculatorOperation.deconstructHPrecedence(operation);
+        while (operation.contains("+") || operation.contains("-") && !operation.matches("-\\d+|-\\d+.\\d+")) {
+            operation = CalculatorOperation.solve(operation);
+            Log.e(TAG, "current operation " + operation);
+
         }
         result = operation;
+        hasCalculated = true;
         return result;
+    }
+
+    public void equal(View view) {
+        String workout = workoutTextView.getText().toString();
+
+        char lastChar = workout.charAt(workout.length() - 1);
+        if (!isSymbol(lastChar)) {
+            resultTextView.setText(doTheMathOperation(workout));
+
+        }
     }
 }

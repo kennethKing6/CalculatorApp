@@ -21,13 +21,13 @@ public class CalculatorOperation {
      * for example, 55*2 + 5 *2 - 6 * 2. This pattern will help me retrieve
      * 55*2, 5 *2 and 6 * 2 while leaving behind +-.
      */
-    private static final String MY_HIGHER_PRECEDENCE_PATTERN = "(\\d+)([*|/])(\\d+)";
+    private static final String MY_HIGHER_PRECEDENCE_PATTERN = "(\\d+|\\d+.\\d+|-\\d+|-\\d+.\\d+)([*|/])(\\d+|\\d+.\\d+|-\\d+|-\\d+.\\d+)";
     /**
      * The pattern I use to get the operations with lower precedence, meaning + and -.
      * for example, 55+ 3 - 6 . This pattern will help me retrieve
      * get the final result of the operation
      */
-    private static final String MY_LOWER_PRECEDENCE_PATTERN = "(\\d+)([+|-])(\\d+)";
+    private static final String MY_LOWER_PRECEDENCE_PATTERN = "(\\d+|\\d+.\\d+|-\\d+|-\\d+.\\d+)([+|-])(\\d+|\\d+.\\d+|-\\d+|-\\d+.\\d+)";
 
     /**
      * it contains the final operation of + and - only .
@@ -78,18 +78,18 @@ public class CalculatorOperation {
         String[] values;
         if (pattern.contains("*")) {
             values = pattern.split("[*]");
-            result = Integer.parseInt(values[0]) * Integer.parseInt(values[1]);
+            result = Double.parseDouble(values[0]) * Double.parseDouble(values[1]);
         } else if (pattern.contains("/")) {
             values = pattern.split("[/]");
-            result = Integer.parseInt(values[0]) / Integer.parseInt(values[1]);
+            result = Double.parseDouble(values[0]) / Double.parseDouble(values[1]);
 
         } else if (pattern.contains("+")) {
             values = pattern.split("[+]");
-            result = Integer.parseInt(values[0]) + Integer.parseInt(values[1]);
+            result = Double.parseDouble(values[0]) + Double.parseDouble(values[1]);
 
         } else {
             values = pattern.split("[-]");
-            result = Integer.parseInt(values[0]) - Integer.parseInt(values[1]);
+            result = Double.parseDouble(values[0]) - Double.parseDouble(values[1]);
 
         }
         return result;
@@ -98,7 +98,7 @@ public class CalculatorOperation {
     /**
      * @return returns the result of the + and - operation remaining
      */
-    public static String solve() {
+    public static String solve(String finalOperation) {
 
         Pattern pattern = Pattern.compile(MY_LOWER_PRECEDENCE_PATTERN);
 
