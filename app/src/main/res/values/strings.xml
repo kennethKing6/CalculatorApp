@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Calculator App</string>
+    <string name="reset_button">C</string>
+    <string name="initial_value">0</string>
+</resources>
