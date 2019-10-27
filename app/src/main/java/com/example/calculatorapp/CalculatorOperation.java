@@ -11,7 +11,9 @@ import java.util.regex.Pattern;
  * format. 6+5-2. Meaning all division and multiplication are done first before the result is *
  * calculated. I call those with * and / high precedence
  * <p>
+ *
  * author Kouadio Kenneth.
+ * date: 27 Oct 2019.
  */
 public class CalculatorOperation {
 
