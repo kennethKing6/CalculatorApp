@@ -8,8 +8,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.regex.Matcher;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -105,12 +105,22 @@ public class MainActivity extends AppCompatActivity {
         String result = null;
         while (operation.contains("*") || operation.contains("/")) {
             operation = CalculatorOperation.deconstructHPrecedence(operation);
-            Log.e(TAG, "current operation " + operation);
         }
 
-        while (operation.contains("+") || operation.contains("-") && !operation.matches("-\\d+|-\\d+.\\d+")) {
+        while (operation.contains("+") || operation.contains("-")) {
+
+
+            Log.e(TAG,"the input: " + operation);
+            /**
+             * break the loop if it is a negative value
+             */
+            if (operation.matches(CalculatorOperation.NEGATIVE_RESULT_FORMAT)) {
+
+                break;
+
+            }
+
             operation = CalculatorOperation.solve(operation);
-            Log.e(TAG, "current operation " + operation);
 
         }
         result = operation;
@@ -123,7 +133,8 @@ public class MainActivity extends AppCompatActivity {
 
         char lastChar = workout.charAt(workout.length() - 1);
         if (!isSymbol(lastChar)) {
-            resultTextView.setText(doTheMathOperation(workout));
+            DecimalFormat numberFormat = new DecimalFormat("#.####");
+            resultTextView.setText(numberFormat.format(Double.parseDouble(doTheMathOperation(workout))));
 
         }
     }

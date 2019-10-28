@@ -1,5 +1,7 @@
 package com.example.calculatorapp;
 
+import android.util.Log;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,11 +13,72 @@ import java.util.regex.Pattern;
  * format. 6+5-2. Meaning all division and multiplication are done first before the result is *
  * calculated. I call those with * and / high precedence
  * <p>
- *
+ * <p>
  * author Kouadio Kenneth.
  * date: 27 Oct 2019.
  */
 public class CalculatorOperation {
+
+    private static final String TAG = CalculatorOperation.class.getSimpleName();
+
+
+    /**
+     * Possible math combinations that could arise
+     *
+     * help me match combinations for:
+     * -7+2
+     * 7+-2
+     * -7+-2
+     *
+     */
+    public static final String NEGATIVE_COMBINATION_ONE= "([-]\\d+)([+|-])(\\d+)|" +
+            "(\\d+)([+|-])([-]\\d+)|" +
+            "([-]\\d+)([+|-])([-]\\d+)";
+
+    /**
+     * Possible math combinations that could arise
+     *
+     * help me match combinations for:
+     * -7.0+2
+     * 7.0+-2
+     * -7.0+-2
+     *
+     */
+    public static final String NEGATIVE_COMBINATION_TWO= "([-]\\d+[.]\\d+)([+|-])(\\d+)|" +
+            "(\\d+[.]\\d+)([+|-])([-]\\d+)|" +
+            "([-]\\d+[.]\\d+)([+|-])([-]\\d+)";
+
+    /**
+     * Possible math combinations that could arise
+     *
+     * help me match combinations for:
+     * -7+2.0
+     * 7+-2.0
+     * -7+-2.0
+     *
+     */
+    public static final String NEGATIVE_COMBINATION_THREE= "([-]\\d+)([+|-])(\\d+[.]\\d+)|" +
+            "(\\d+)([+|-])([-]\\d+[.]\\d+)|" +
+            "([-]\\d+)([+|-])([-]\\d+[.]\\d+)";
+
+    /**
+     * Possible math combinations that could arise
+     *
+     * help me match combinations for:
+     * -7.0+2.0
+     * 7.0+-2.0
+     * -7+-2.0
+     *
+     */
+    public static final String NEGATIVE_COMBINATION_FOUR= "([-]\\d+[.]\\d+)([+|-])(\\d+[.]\\d+)|" +
+            "(\\d+[.]\\d+)([+|-])([-]\\d+[.]\\d+)|" +
+            "([-]\\d+)([+|-])([-]\\d+[.]\\d+)";
+    /**
+     * These two negative fields represents the format of the negative values I get from this class.
+     * It is either -2.0
+     */
+    public static final String NEGATIVE_RESULT_FORMAT = "([-])(\\d+)([.])(\\d+)";
+
 
 
     /**
@@ -23,19 +86,20 @@ public class CalculatorOperation {
      * for example, 55*2 + 5 *2 - 6 * 2. This pattern will help me retrieve
      * 55*2, 5 *2 and 6 * 2 while leaving behind +-.
      */
-    private static final String MY_HIGHER_PRECEDENCE_PATTERN = "(\\d+|\\d+.\\d+|-\\d+|-\\d+.\\d+)([*|/])(\\d+|\\d+.\\d+|-\\d+|-\\d+.\\d+)";
+    public static final String MY_HIGHER_PRECEDENCE_PATTERN = "(\\d+)([*|/])(\\d+)|(\\d+[.]\\d+)([*|/])(\\d+)|" +
+            "(\\d+)([*|/])(\\d+[.]\\d+)|(\\d+[.]\\d+)([*|/])(\\d+[.]\\d+)";
+    ;
+
     /**
      * The pattern I use to get the operations with lower precedence, meaning + and -.
      * for example, 55+ 3 - 6 . This pattern will help me retrieve
      * get the final result of the operation
      */
-    private static final String MY_LOWER_PRECEDENCE_PATTERN = "(\\d+|\\d+.\\d+|-\\d+|-\\d+.\\d+)([+|-])(\\d+|\\d+.\\d+|-\\d+|-\\d+.\\d+)";
+    public static final String MY_LOWER_PRECEDENCE_PATTERN = "(\\d+)([+|-])(\\d+)|(\\d+[.]\\d+)([+|-])(\\d+[.]\\d+)|" +
+            "(\\d+[.]\\d+)([+|-])(\\d+)|" +
+            "(\\d+)([+|-])(\\d+[.]\\d+)|" + NEGATIVE_COMBINATION_ONE+"|"+NEGATIVE_COMBINATION_TWO+
+            "|"+NEGATIVE_COMBINATION_THREE+"|"+NEGATIVE_COMBINATION_FOUR;
 
-    /**
-     * it contains the final operation of + and - only .
-     * I use it to do the final step of math aaddition and operation
-     */
-    private static String finalOperation;
 
     private CalculatorOperation() {
     }
@@ -78,6 +142,8 @@ public class CalculatorOperation {
     private static double calculatePrecedence(String pattern) {
         double result;
         String[] values;
+
+
         if (pattern.contains("*")) {
             values = pattern.split("[*]");
             result = Double.parseDouble(values[0]) * Double.parseDouble(values[1]);
@@ -94,6 +160,7 @@ public class CalculatorOperation {
             result = Double.parseDouble(values[0]) - Double.parseDouble(values[1]);
 
         }
+
         return result;
     }
 
@@ -105,6 +172,8 @@ public class CalculatorOperation {
         Pattern pattern = Pattern.compile(MY_LOWER_PRECEDENCE_PATTERN);
 
         Matcher matcher = pattern.matcher(finalOperation);
+        Log.e(TAG, "The solve input : " + finalOperation);
+
 
         /**
          * This object helps in creating a format of 2+4-5. Where the
@@ -116,13 +185,14 @@ public class CalculatorOperation {
 
 
         while (matcher.find()) {
+            Log.e(TAG, "The match lower: " + matcher.group());
             matcher.appendReplacement(sb, "" + calculatePrecedence(matcher.group()));
 
 
         }
 
         matcher.appendTail(sb);
-
+        Log.e(TAG, "The returning operation: " + sb.toString());
 
         return sb.toString();
     }
