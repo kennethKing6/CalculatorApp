@@ -138,4 +138,8 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
+
+    public void clear(View view) {
+        workoutTextView.setText(getString(R.string.initial_value));
+    }
 }

@@ -24,61 +24,56 @@ public class CalculatorOperation {
 
     /**
      * Possible math combinations that could arise
-     *
+     * <p>
      * help me match combinations for:
      * -7+2
      * 7+-2
      * -7+-2
-     *
      */
-    public static final String NEGATIVE_COMBINATION_ONE= "([-]\\d+)([+|-])(\\d+)|" +
-            "(\\d+)([+|-])([-]\\d+)|" +
-            "([-]\\d+)([+|-])([-]\\d+)";
+    public static final String NEGATIVE_COMBINATION_ONE = "(.\\d+)([+|-])(\\d+)|" +
+            "(\\d+)([+|-])(.\\d+)|" +
+            "(.\\d+)([+|-])(.\\d+)";
 
     /**
      * Possible math combinations that could arise
-     *
+     * <p>
      * help me match combinations for:
      * -7.0+2
      * 7.0+-2
      * -7.0+-2
-     *
      */
-    public static final String NEGATIVE_COMBINATION_TWO= "([-]\\d+[.]\\d+)([+|-])(\\d+)|" +
-            "(\\d+[.]\\d+)([+|-])([-]\\d+)|" +
-            "([-]\\d+[.]\\d+)([+|-])([-]\\d+)";
+    public static final String NEGATIVE_COMBINATION_TWO = "(.\\d+[.]\\d+)([+|-])(\\d+)|" +
+            "(\\d+[.]\\d+)([+|-])(.\\d+)|" +
+            "(.\\d+[.]\\d+)([+|-])(.\\d+)";
 
     /**
      * Possible math combinations that could arise
-     *
+     * <p>
      * help me match combinations for:
      * -7+2.0
      * 7+-2.0
      * -7+-2.0
-     *
      */
-    public static final String NEGATIVE_COMBINATION_THREE= "([-]\\d+)([+|-])(\\d+[.]\\d+)|" +
-            "(\\d+)([+|-])([-]\\d+[.]\\d+)|" +
-            "([-]\\d+)([+|-])([-]\\d+[.]\\d+)";
+    public static final String NEGATIVE_COMBINATION_THREE = "(.\\d+)([+|-])(\\d+[.]\\d+)|" +
+            "(\\d+)([+|-])(.\\d+[.]\\d+)|" +
+            "(.\\d+)([+|-])(.\\d+[.]\\d+)";
 
     /**
      * Possible math combinations that could arise
-     *
+     * <p>
      * help me match combinations for:
      * -7.0+2.0
      * 7.0+-2.0
      * -7+-2.0
-     *
      */
-    public static final String NEGATIVE_COMBINATION_FOUR= "([-]\\d+[.]\\d+)([+|-])(\\d+[.]\\d+)|" +
-            "(\\d+[.]\\d+)([+|-])([-]\\d+[.]\\d+)|" +
-            "([-]\\d+)([+|-])([-]\\d+[.]\\d+)";
+    public static final String NEGATIVE_COMBINATION_FOUR = "(.\\d+[.]\\d+)([+|-])(\\d+[.]\\d+)|" +
+            "(\\d+[.]\\d+)([+|-])(.\\d+[.]\\d+)|" +
+            "(.\\d+)([+|-])(.\\d+[.]\\d+)";
     /**
      * These two negative fields represents the format of the negative values I get from this class.
      * It is either -2.0
      */
     public static final String NEGATIVE_RESULT_FORMAT = "([-])(\\d+)([.])(\\d+)";
-
 
 
     /**
@@ -95,11 +90,14 @@ public class CalculatorOperation {
      * for example, 55+ 3 - 6 . This pattern will help me retrieve
      * get the final result of the operation
      */
-    public static final String MY_LOWER_PRECEDENCE_PATTERN = "(\\d+)([+|-])(\\d+)|(\\d+[.]\\d+)([+|-])(\\d+[.]\\d+)|" +
+    public static final String MY_LOWER_POSITIVE_PRECEDENCE_PATTERN = "(\\d+[.]\\d+)([+|-])(\\d+[.]\\d+)|" +
             "(\\d+[.]\\d+)([+|-])(\\d+)|" +
-            "(\\d+)([+|-])(\\d+[.]\\d+)|" + NEGATIVE_COMBINATION_ONE+"|"+NEGATIVE_COMBINATION_TWO+
-            "|"+NEGATIVE_COMBINATION_THREE+"|"+NEGATIVE_COMBINATION_FOUR;
+            "(\\d+)([+|-])(\\d+[.]\\d+)|" +
+            "(\\d+)([+|-])(\\d+)";
 
+
+    public static final String MY_LOWER_NEGATIVE_PRECEDENCE_PATTERN = NEGATIVE_COMBINATION_ONE + "|" + NEGATIVE_COMBINATION_TWO +
+            "|" + NEGATIVE_COMBINATION_THREE + "|" + NEGATIVE_COMBINATION_FOUR;
 
     private CalculatorOperation() {
     }
@@ -140,26 +138,56 @@ public class CalculatorOperation {
 
 
     private static double calculatePrecedence(String pattern) {
-        double result;
+        double result = 0.0;
         String[] values;
 
 
-        if (pattern.contains("*")) {
-            values = pattern.split("[*]");
-            result = Double.parseDouble(values[0]) * Double.parseDouble(values[1]);
-        } else if (pattern.contains("/")) {
-            values = pattern.split("[/]");
-            result = Double.parseDouble(values[0]) / Double.parseDouble(values[1]);
+        if (pattern.matches("(\\d+)([+|-])(\\d+)") || pattern.matches("(\\d+)([*|/])(\\d+)") ||
+                pattern.matches("(\\d+[.]\\d+)([+|-])(\\d+)") || pattern.matches("(\\d+[.]\\d+)([*|/])(\\d+)") ||
+                pattern.matches("(\\d+)([+|-])(\\d+[.]\\d+)") || pattern.matches("(\\d+)([*|/])(\\d+[.]\\d+)") ||
+                pattern.matches("(\\d+[.]\\d+)([+|-])(\\d+[.]\\d+)") || pattern.matches("(\\d+)([*|/])(\\d+[.]\\d+)")) {
+            if (pattern.contains("*")) {
+                values = pattern.split("[*]");
+                result = Double.parseDouble(values[0]) * Double.parseDouble(values[1]);
+            } else if (pattern.contains("/")) {
+                values = pattern.split("[/]");
+                result = Double.parseDouble(values[0]) / Double.parseDouble(values[1]);
 
-        } else if (pattern.contains("+")) {
-            values = pattern.split("[+]");
-            result = Double.parseDouble(values[0]) + Double.parseDouble(values[1]);
+            } else if (pattern.contains("+")) {
+                values = pattern.split("[+]");
+                result = Double.parseDouble(values[0]) + Double.parseDouble(values[1]);
 
+            } else {
+                values = pattern.split("[-]");
+                result = Double.parseDouble(values[0]) - Double.parseDouble(values[1]);
+
+            }
         } else {
-            values = pattern.split("[-]");
-            result = Double.parseDouble(values[0]) - Double.parseDouble(values[1]);
+            if (pattern.contains("*")) {
+                values = pattern.split("[*]");
+                result = Double.parseDouble(values[0]) * Double.parseDouble(values[1]);
+            } else if (pattern.contains("/")) {
+                values = pattern.split("[/]");
+                result = Double.parseDouble(values[0]) / Double.parseDouble(values[1]);
+
+            } else if (pattern.contains("+")) {
+                values = pattern.split("[+]");
+                result = Double.parseDouble(values[0]) + Double.parseDouble(values[1]);
+
+            } else if (pattern.contains("--")) {
+                values = pattern.split("(--)");
+                result = Double.parseDouble(values[0]) - Double.parseDouble("-" + values[1]);
+
+            } else if (pattern.matches("([-]\\d+)([-])(\\d+)")) {
+                values = pattern.substring(1).split("-");
+                result = Double.parseDouble("-" + values[0]) - Double.parseDouble(values[1]);
+            } else if (pattern.matches("(\\d+)([-])(\\d+)")) {
+                values = pattern.split("-");
+                result = Double.parseDouble(values[0]) - Double.parseDouble(values[1]);
+            }
 
         }
+
 
         return result;
     }
@@ -169,7 +197,7 @@ public class CalculatorOperation {
      */
     public static String solve(String finalOperation) {
 
-        Pattern pattern = Pattern.compile(MY_LOWER_PRECEDENCE_PATTERN);
+        Pattern pattern = Pattern.compile(MY_LOWER_POSITIVE_PRECEDENCE_PATTERN);
 
         Matcher matcher = pattern.matcher(finalOperation);
         Log.e(TAG, "The solve input : " + finalOperation);
@@ -179,7 +207,6 @@ public class CalculatorOperation {
          * This object helps in creating a format of 2+4-5. Where the
          * operations of multiplication and addition are already calculated
          */
-
 
         StringBuffer sb = new StringBuffer();
 
