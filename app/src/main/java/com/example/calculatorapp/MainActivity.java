@@ -10,6 +10,8 @@ import android.widget.Toast;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -107,10 +109,12 @@ public class MainActivity extends AppCompatActivity {
             operation = CalculatorOperation.deconstructHPrecedence(operation);
         }
 
+        Pattern negativePattern = Pattern.compile(CalculatorOperation.MY_LOWER_NEGATIVE_PRECEDENCE_PATTERN);
+
         while (operation.contains("+") || operation.contains("-")) {
 
 
-            Log.e(TAG,"the input: " + operation);
+            Log.e(TAG, "the input: " + operation);
             /**
              * break the loop if it is a negative value
              */
@@ -120,7 +124,17 @@ public class MainActivity extends AppCompatActivity {
 
             }
 
-            operation = CalculatorOperation.solve(operation);
+            Matcher negativeMatcher = negativePattern.matcher(operation);
+
+            if (negativeMatcher.find()) {
+                operation = CalculatorOperation.solve(operation, CalculatorOperation.MY_LOWER_NEGATIVE_PRECEDENCE_PATTERN);
+                Log.e(TAG, "negative was found");
+
+            } else {
+                operation = CalculatorOperation.solve(operation, CalculatorOperation.MY_LOWER_POSITIVE_PRECEDENCE_PATTERN);
+                Log.e(TAG, "Positive was found");
+            }
+
 
         }
         result = operation;
@@ -128,9 +142,15 @@ public class MainActivity extends AppCompatActivity {
         return result;
     }
 
+    /**
+     * Perform the math operation
+     *
+     * @param view
+     */
     public void equal(View view) {
         String workout = workoutTextView.getText().toString();
 
+        //Show the result if the last character is not a mathematical symbol
         char lastChar = workout.charAt(workout.length() - 1);
         if (!isSymbol(lastChar)) {
             DecimalFormat numberFormat = new DecimalFormat("#.####");
