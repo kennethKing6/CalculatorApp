@@ -41,17 +41,20 @@ public class CalculatorOperation {
     public static final String MY_LOWER_POSITIVE_PRECEDENCE_PATTERN = "(\\d+[.]\\d+|\\d+)([+|-])(\\d+[.]\\d+|\\d+)";
 
     /**
-     * The pattern is used to match operations for negative operation.eg: 7+-5 or -7.0+5 or -7.0+-8.0
+     * The pattern is used to match operations for negative operation.eg: -7+-5 or -7.0+ -5 or -7.0+-8.0
      */
-    public static final String MY_LOWER_NEGATIVE_PRECEDENCE_PATTERN = "([-]\\d+[.]\\d+|[-]\\d+)([+|-])([-]\\d+[.]\\d|[-]\\d+)";
+    public static final String MY_LOWER_NEGATIVE_PRECEDENCE_PATTERN = "(-\\d+[.]\\d+|-\\d+)([+|-])(-\\d+[.]\\d+|-\\d+)";
+    /**
+     * The pattern is used to match operations for negative operation.eg: -7+5 or -7.0+5 or -7+8.0
+     */
+    public static final String MY_LOWER_NEGATIVE_PRECEDENCE_PATTERN_TWO = "(-\\d+[.]\\d+|-\\d+)([+|-])(\\d+[.]\\d+|\\d+)";
 
     private CalculatorOperation() {
     }
 
     /**
      * This method is used to deconstruct the operation that the user enters by looking at
-     * * and / in order to deal with the higher precendence values first and store them in
-     * an array.
+     * * and / in order to deal with the higher precendence values first and store then
      *
      * @param userInput
      */
@@ -88,11 +91,7 @@ public class CalculatorOperation {
         double result = 0.0;
         String[] values;
 
-
-        if (pattern.matches("(\\d+)([+|-])(\\d+)") || pattern.matches("(\\d+)([*|/])(\\d+)") ||
-                pattern.matches("(\\d+[.]\\d+)([+|-])(\\d+)") || pattern.matches("(\\d+[.]\\d+)([*|/])(\\d+)") ||
-                pattern.matches("(\\d+)([+|-])(\\d+[.]\\d+)") || pattern.matches("(\\d+)([*|/])(\\d+[.]\\d+)") ||
-                pattern.matches("(\\d+[.]\\d+)([+|-])(\\d+[.]\\d+)") || pattern.matches("(\\d+)([*|/])(\\d+[.]\\d+)")) {
+        if (pattern.matches(MY_HIGHER_PRECEDENCE_PATTERN) || pattern.matches(MY_LOWER_POSITIVE_PRECEDENCE_PATTERN)) {
             if (pattern.contains("*")) {
                 values = pattern.split("[*]");
                 result = Double.parseDouble(values[0]) * Double.parseDouble(values[1]);
@@ -104,12 +103,12 @@ public class CalculatorOperation {
                 values = pattern.split("[+]");
                 result = Double.parseDouble(values[0]) + Double.parseDouble(values[1]);
 
-            } else {
+            } else if (pattern.contains("-")) {
                 values = pattern.split("[-]");
                 result = Double.parseDouble(values[0]) - Double.parseDouble(values[1]);
 
             }
-        } else {
+        } else if (pattern.matches(MY_LOWER_NEGATIVE_PRECEDENCE_PATTERN)) {
             if (pattern.contains("*")) {
                 values = pattern.split("[*]");
                 result = Double.parseDouble(values[0]) * Double.parseDouble(values[1]);
@@ -125,14 +124,19 @@ public class CalculatorOperation {
                 values = pattern.split("(--)");
                 result = Double.parseDouble(values[0]) - Double.parseDouble("-" + values[1]);
 
-            } else if (pattern.matches("([-]\\d+)([-])(\\d+)")) {
-                values = pattern.substring(1).split("-");
-                result = Double.parseDouble("-" + values[0]) - Double.parseDouble(values[1]);
             } else if (pattern.matches("(\\d+)([-])(\\d+)")) {
                 values = pattern.split("-");
                 result = Double.parseDouble(values[0]) - Double.parseDouble(values[1]);
             }
 
+
+        } else if (pattern.matches(MY_LOWER_NEGATIVE_PRECEDENCE_PATTERN_TWO)) {
+
+            values = pattern.substring(1).split("-");
+            result = Double.parseDouble("-" + values[0]) - Double.parseDouble(values[1]);
+
+        } else {
+            Log.e(TAG, "Nothing matched this pattern " + pattern);
         }
 
 

@@ -16,8 +16,8 @@ import java.util.regex.Pattern;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    TextView workoutTextView;
-    TextView resultTextView;
+    private TextView workoutTextView;
+    private TextView resultTextView;
     private boolean hasCalculated;
 
 
@@ -102,19 +102,26 @@ public class MainActivity extends AppCompatActivity {
         return symbol;
     }
 
+    /**
+     * @param userInput is the user operation to be calculated
+     * @return the result of the operation is returned
+     */
     private String doTheMathOperation(String userInput) {
         String operation = userInput;
         String result = null;
         while (operation.contains("*") || operation.contains("/")) {
+            Log.e(TAG, "the input */: " + operation);
+
             operation = CalculatorOperation.deconstructHPrecedence(operation);
         }
 
         Pattern negativePattern = Pattern.compile(CalculatorOperation.MY_LOWER_NEGATIVE_PRECEDENCE_PATTERN);
+        Pattern negativePattern2 = Pattern.compile(CalculatorOperation.MY_LOWER_NEGATIVE_PRECEDENCE_PATTERN_TWO);
 
         while (operation.contains("+") || operation.contains("-")) {
 
 
-            Log.e(TAG, "the input: " + operation);
+            Log.e(TAG, "the input -+: " + operation);
             /**
              * break the loop if it is a negative value
              */
@@ -125,10 +132,15 @@ public class MainActivity extends AppCompatActivity {
             }
 
             Matcher negativeMatcher = negativePattern.matcher(operation);
+            Matcher negativeMatcher2 = negativePattern2.matcher(operation);
 
             if (negativeMatcher.find()) {
                 operation = CalculatorOperation.solve(operation, CalculatorOperation.MY_LOWER_NEGATIVE_PRECEDENCE_PATTERN);
                 Log.e(TAG, "negative was found");
+
+            } else if (negativeMatcher2.find()) {
+                operation = CalculatorOperation.solve(operation, CalculatorOperation.MY_LOWER_NEGATIVE_PRECEDENCE_PATTERN_TWO);
+                Log.e(TAG, "negative 2 was found ");
 
             } else {
                 operation = CalculatorOperation.solve(operation, CalculatorOperation.MY_LOWER_POSITIVE_PRECEDENCE_PATTERN);
