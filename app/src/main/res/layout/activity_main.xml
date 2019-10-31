@@ -74,8 +74,10 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="%"
+            android:onClick="displayNumber"
+            android:text="."
             android:textSize="@dimen/letter_fonts"
+            android:textStyle="bold"
             app:fontFamily="sans-serif" />
 
         <TextView
