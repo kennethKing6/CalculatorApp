@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
             String result = doTheMathOperation(workout);
             if (!result.isEmpty())
                 resultTextView.setText(numberFormat.format(Double.parseDouble(result)));
-            else{
+            else {
                 Toast.makeText(this, "Bad Expression", Toast.LENGTH_LONG).show();
             }
 
@@ -174,6 +174,15 @@ public class MainActivity extends AppCompatActivity {
     public void clear(View view) {
         workoutTextView.setText(getString(R.string.initial_value));
         resultTextView.setText(getString(R.string.initial_value));
+        hasCalculated=false;
+
+    }
+
+    public void delete(View view) {
+        if (!(workoutTextView.getText().toString().length() == 1 && workoutTextView.getText().toString().charAt(0) == '0') && hasCalculated==false) {
+            StringBuffer sb = new StringBuffer(workoutTextView.getText().toString());
+            workoutTextView.setText(sb.deleteCharAt(sb.toString().length() - 1).toString());
+        }
 
     }
 }
