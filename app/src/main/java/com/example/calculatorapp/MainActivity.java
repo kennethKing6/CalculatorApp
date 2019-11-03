@@ -110,7 +110,6 @@ public class MainActivity extends AppCompatActivity {
         String operation = userInput;
         String result = null;
         while (operation.contains("*") || operation.contains("/")) {
-            Log.e(TAG, "the input */: " + operation);
 
             operation = CalculatorOperation.deconstructHPrecedence(operation);
         }
@@ -121,7 +120,6 @@ public class MainActivity extends AppCompatActivity {
         while (operation.contains("+") || operation.contains("-")) {
 
 
-            Log.e(TAG, "the input -+: " + operation);
             /**
              * break the loop if it is a negative value
              */
@@ -136,15 +134,12 @@ public class MainActivity extends AppCompatActivity {
 
             if (negativeMatcher.find()) {
                 operation = CalculatorOperation.solve(operation, CalculatorOperation.MY_LOWER_NEGATIVE_PRECEDENCE_PATTERN);
-                Log.e(TAG, "negative was found");
 
-            } else if (negativeMatcher2.find()) {
+            } else if (negativeMatcher2.find() && negativeMatcher2.start() == 0) {
                 operation = CalculatorOperation.solve(operation, CalculatorOperation.MY_LOWER_NEGATIVE_PRECEDENCE_PATTERN_TWO);
-                Log.e(TAG, "negative 2 was found ");
 
             } else {
                 operation = CalculatorOperation.solve(operation, CalculatorOperation.MY_LOWER_POSITIVE_PRECEDENCE_PATTERN);
-                Log.e(TAG, "Positive was found");
             }
 
 
@@ -166,12 +161,19 @@ public class MainActivity extends AppCompatActivity {
         char lastChar = workout.charAt(workout.length() - 1);
         if (!isSymbol(lastChar)) {
             DecimalFormat numberFormat = new DecimalFormat("#.####");
-            resultTextView.setText(numberFormat.format(Double.parseDouble(doTheMathOperation(workout))));
+            String result = doTheMathOperation(workout);
+            if (!result.isEmpty())
+                resultTextView.setText(numberFormat.format(Double.parseDouble(result)));
+            else{
+                Toast.makeText(this, "Bad Expression", Toast.LENGTH_LONG).show();
+            }
 
         }
     }
 
     public void clear(View view) {
         workoutTextView.setText(getString(R.string.initial_value));
+        resultTextView.setText(getString(R.string.initial_value));
+
     }
 }

@@ -21,7 +21,14 @@ public class CalculatorOperation {
 
     private static final String TAG = CalculatorOperation.class.getSimpleName();
 
-
+    /**
+     * This pattern matches *. or .*
+     */
+    public static final String BAD_EXPRESSION = "([.])([+[-]*/])|([+[-]*/]([.]))";
+    /**
+     * This operator is used to match 7., 4., 0. type of numbers
+     */
+    public static final String DOT_NUMBER_LEFT = "(\\d+[.]\\d+)|(\\d+[.])|([.]\\d+|(\\d+))";
     /**
      * This variable is the regex for a negative value. The format is
      * -2.0. I used this format because the result out of this class is always a double.
@@ -59,11 +66,7 @@ public class CalculatorOperation {
      * @param userInput
      */
     public static String deconstructHPrecedence(String userInput) {
-        Pattern pattern = Pattern.compile(MY_HIGHER_PRECEDENCE_PATTERN);
-
-        Matcher matcher = pattern.matcher(userInput);
-
-        Log.e(TAG, "the user input: " + userInput);
+        String cleaned = cleanOperation(userInput);
         /**
          * This object helps in creating a format of 2+4-5. Where the
          * operations of multiplication and addition are already calculated
@@ -72,14 +75,22 @@ public class CalculatorOperation {
 
         StringBuffer sb = new StringBuffer();
 
-
-        matcher.find();
-        matcher.appendReplacement(sb, "" + calculatePrecedence(matcher.group()));
+        if (!cleaned.matches(BAD_EXPRESSION)) {
 
 
-        matcher.appendTail(sb);
+            Pattern pattern = Pattern.compile(MY_HIGHER_PRECEDENCE_PATTERN);
 
-        Log.e(TAG, "the end result: " + sb.toString());
+            Matcher matcher = pattern.matcher(cleaned);
+
+
+            matcher.find();
+            matcher.appendReplacement(sb, "" + calculatePrecedence(matcher.group()));
+
+
+            matcher.appendTail(sb);
+
+            Log.e(TAG, "the end result: " + sb.toString());
+        }
 
 
         return sb.toString();
@@ -109,31 +120,26 @@ public class CalculatorOperation {
 
             }
         } else if (pattern.matches(MY_LOWER_NEGATIVE_PRECEDENCE_PATTERN)) {
-            if (pattern.contains("*")) {
-                values = pattern.split("[*]");
-                result = Double.parseDouble(values[0]) * Double.parseDouble(values[1]);
-            } else if (pattern.contains("/")) {
-                values = pattern.split("[/]");
-                result = Double.parseDouble(values[0]) / Double.parseDouble(values[1]);
 
-            } else if (pattern.contains("+")) {
-                values = pattern.split("[+]");
-                result = Double.parseDouble(values[0]) + Double.parseDouble(values[1]);
-
-            } else if (pattern.contains("--")) {
+            if (pattern.contains("--")) {
                 values = pattern.split("(--)");
                 result = Double.parseDouble(values[0]) - Double.parseDouble("-" + values[1]);
-
-            } else if (pattern.matches("(\\d+)([-])(\\d+)")) {
-                values = pattern.split("-");
-                result = Double.parseDouble(values[0]) - Double.parseDouble(values[1]);
+            } else {
+                values = pattern.split("[+]");
+                result = Double.parseDouble(values[0]) + Double.parseDouble(values[1]);
             }
 
 
         } else if (pattern.matches(MY_LOWER_NEGATIVE_PRECEDENCE_PATTERN_TWO)) {
 
-            values = pattern.substring(1).split("-");
-            result = Double.parseDouble("-" + values[0]) - Double.parseDouble(values[1]);
+
+            if (pattern.matches("(-\\d+[.]\\d+|-\\d+)([-])(\\d+[.]\\d+|\\d+)")) {
+                values = pattern.substring(1).split("-");
+                result = Double.parseDouble("-" + values[0]) - Double.parseDouble(values[1]);
+            } else {
+                values = pattern.split("[+]");
+                result = Double.parseDouble(values[0]) + Double.parseDouble(values[1]);
+            }
 
         } else {
             Log.e(TAG, "Nothing matched this pattern " + pattern);
@@ -148,12 +154,7 @@ public class CalculatorOperation {
      */
     public static String solve(String finalOperation, String format) {
 
-        Pattern pattern = Pattern.compile(format);
-
-        Matcher matcher = pattern.matcher(finalOperation);
-        Log.e(TAG, "The solve input : " + finalOperation);
-
-
+        String cleaned = cleanOperation(finalOperation);
         /**
          * This object helps in creating a format of 2+4-5. Where the
          * operations of multiplication and addition are already calculated
@@ -162,14 +163,70 @@ public class CalculatorOperation {
         StringBuffer sb = new StringBuffer();
 
 
-        matcher.find();
-        Log.e(TAG, "The match lower: " + matcher.group());
-        matcher.appendReplacement(sb, "" + calculatePrecedence(matcher.group()));
+        if (!cleaned.matches(BAD_EXPRESSION)) {
+            Pattern pattern = Pattern.compile(format);
+
+            Matcher matcher = pattern.matcher(cleanOperation(cleaned));
 
 
-        matcher.appendTail(sb);
-        Log.e(TAG, "The returning operation: " + sb.toString());
+            matcher.find();
+            matcher.appendReplacement(sb, "" + calculatePrecedence(matcher.group()));
+
+
+            matcher.appendTail(sb);
+        }
 
         return sb.toString();
+    }
+
+    /**
+     * This method makes sure that the operation only has 7.0 but not 7. or .1
+     * type of numbers
+     *
+     * @param operation is the operation that we get from the user
+     * @return
+     */
+    private static String cleanOperation(String operation) {
+
+
+        Pattern pattern = Pattern.compile(DOT_NUMBER_LEFT);
+        Matcher matcher = pattern.matcher(operation);
+        StringBuffer sb = new StringBuffer();
+        while (matcher.find()) {
+            if (matcher.group().matches("(\\d+[.])")) {
+
+                Log.e(TAG, " I found " + matcher.group());
+
+                Log.e(TAG, "7. format matched in " + matcher.group());
+                matcher.appendReplacement(sb, (new StringBuffer(matcher.group())).insert(matcher.group().length(), "0").toString());
+                Log.e(TAG, "7. format matched out " + sb.toString());
+            } else if (matcher.group().matches("([.]\\d+)")) {
+
+                Log.e(TAG, " I found " + matcher.group());
+
+                Log.e(TAG, "7. format matched in " + matcher.group());
+                matcher.appendReplacement(sb, (new StringBuffer(matcher.group())).insert(0, "0").toString());
+                Log.e(TAG, "7. format matched out " + sb.toString());
+            }
+
+
+        }
+
+        operation = matcher.appendTail(sb).toString();
+
+        //Check for bad expression like .* or *.
+        pattern = Pattern.compile(BAD_EXPRESSION);
+        matcher = pattern.matcher(operation);
+
+        while (matcher.find()) {
+            //This is bad expression
+            operation = matcher.group();
+        }
+
+
+        Log.e(TAG, "Ending operation: " + operation);
+
+
+        return operation;
     }
 }
