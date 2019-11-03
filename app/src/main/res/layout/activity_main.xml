@@ -20,88 +20,81 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.80300957" />
 
-    <ImageView
-        android:id="@+id/imageButton"
+    <TextView
+        android:id="@+id/textView2"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="#3767FC"
-        android:foregroundGravity="center"
-        android:onClick="equal"
-        android:src="@drawable/ic_add_menu_icon"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        android:background="#172035"
+        android:textColor="@android:color/white"
+        android:gravity="center"
+        android:onClick="clear"
+        android:text="@string/reset_button"
+        android:textSize="@dimen/letter_fonts"
+        app:fontFamily="sans-serif"
+        app:layout_constraintBottom_toTopOf="@+id/guideline7"
+        app:layout_constraintEnd_toStartOf="@+id/guideline4"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline2"
-        app:layout_constraintVertical_bias="1.0"
-        app:srcCompat="@drawable/ic_groupe_4" />
+        app:layout_constraintTop_toTopOf="@+id/guideline_first" />
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
+    <TextView
+        android:id="@+id/textView3"
         android:layout_width="0dp"
-        android:layout_height="82dp"
-        android:orientation="horizontal"
+        android:background="#172035"
+        android:textColor="@android:color/white"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:onClick="displayNumber"
+        android:text="0"
+        android:textSize="@dimen/letter_fonts"
+        app:fontFamily="sans-serif"
+        app:layout_constraintBottom_toTopOf="@+id/textView9"
+        app:layout_constraintEnd_toStartOf="@+id/guideline5"
+        app:layout_constraintStart_toStartOf="@+id/guideline4"
+        app:layout_constraintTop_toTopOf="@+id/guideline_first" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="0dp"
+        android:background="#172035"
+        android:textColor="@android:color/white"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:onClick="displayNumber"
+        android:text="."
+        android:textSize="@dimen/letter_fonts"
+        android:textStyle="bold"
+        app:fontFamily="sans-serif"
+        app:layout_constraintBottom_toTopOf="@+id/guideline7"
+        app:layout_constraintEnd_toStartOf="@+id/guideline3"
+        app:layout_constraintStart_toStartOf="@+id/guideline5"
+        app:layout_constraintTop_toTopOf="@+id/guideline_first" />
+
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="0dp"
+        android:background="#172035"
+        android:textColor="@android:color/white"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:onClick="displayMathSymbol"
+        android:text="/"
+        android:textSize="@dimen/letter_fonts"
+        app:fontFamily="sans-serif"
         app:layout_constraintBottom_toTopOf="@+id/guideline7"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline_first">
-
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="200dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:onClick="clear"
-            android:text="@string/reset_button"
-            android:textSize="@dimen/letter_fonts"
-            app:fontFamily="sans-serif" />
-
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_width="200dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:onClick="displayNumber"
-            android:text="0"
-            android:textSize="@dimen/letter_fonts"
-            app:fontFamily="sans-serif" />
-
-        <TextView
-            android:id="@+id/textView4"
-            android:layout_width="200dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:onClick="displayNumber"
-            android:text="."
-            android:textSize="@dimen/letter_fonts"
-            android:textStyle="bold"
-            app:fontFamily="sans-serif" />
-
-        <TextView
-            android:id="@+id/textView5"
-            android:layout_width="200dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:onClick="displayMathSymbol"
-            android:paddingLeft="25dp"
-            android:text="/"
-            android:textSize="@dimen/letter_fonts"
-            app:fontFamily="sans-serif" />
-    </LinearLayout>
+        app:layout_constraintStart_toStartOf="@+id/guideline3"
+        app:layout_constraintTop_toTopOf="@+id/guideline_first" />
 
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="83dp"
-        android:layout_height="277dp"
+        android:layout_height="0dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/imageButton"
+        app:layout_constraintBottom_toTopOf="@+id/guideline2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline3"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+        app:layout_constraintTop_toBottomOf="@+id/textView5">
 
         <TextView
             android:id="@+id/textView"
@@ -111,6 +104,8 @@
             android:gravity="center"
             android:onClick="displayMathSymbol"
             android:text="*"
+            android:background="#172035"
+            android:textColor="@android:color/white"
             android:textSize="@dimen/letter_fonts" />
 
         <TextView
@@ -121,6 +116,8 @@
             android:gravity="center"
             android:onClick="displayMathSymbol"
             android:text="-"
+            android:background="#172035"
+            android:textColor="@android:color/white"
             android:textSize="@dimen/letter_fonts" />
 
         <TextView
@@ -131,6 +128,8 @@
             android:gravity="center"
             android:onClick="displayMathSymbol"
             android:text="+"
+            android:background="#172035"
+            android:textColor="@android:color/white"
             android:textSize="24sp" />
     </LinearLayout>
 
@@ -138,6 +137,8 @@
         android:id="@+id/textView8"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="#172035"
+        android:textColor="@android:color/white"
         android:gravity="center"
         android:onClick="displayNumber"
         android:text="7"
@@ -155,6 +156,8 @@
         android:gravity="center"
         android:onClick="displayNumber"
         android:text="8"
+        android:background="#172035"
+        android:textColor="@android:color/white"
         android:textSize="@dimen/letter_fonts"
         app:layout_constraintBottom_toTopOf="@+id/guideline8"
         app:layout_constraintEnd_toStartOf="@+id/guideline5"
@@ -165,6 +168,8 @@
         android:id="@+id/textView10"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="#172035"
+        android:textColor="@android:color/white"
         android:gravity="center"
         android:onClick="displayNumber"
         android:text="9"
@@ -181,6 +186,8 @@
         android:gravity="center"
         android:onClick="displayNumber"
         android:text="4"
+        android:background="#172035"
+        android:textColor="@android:color/white"
         android:textSize="@dimen/letter_fonts"
         app:layout_constraintBottom_toTopOf="@+id/guideline9"
         app:layout_constraintEnd_toStartOf="@+id/guideline4"
@@ -194,6 +201,8 @@
         android:gravity="center"
         android:onClick="displayNumber"
         android:text="5"
+        android:background="#172035"
+        android:textColor="@android:color/white"
         android:textSize="@dimen/letter_fonts"
         app:layout_constraintBottom_toTopOf="@+id/guideline9"
         app:layout_constraintEnd_toStartOf="@+id/guideline5"
@@ -207,6 +216,8 @@
         android:gravity="center"
         android:onClick="displayNumber"
         android:text="6"
+        android:background="#172035"
+        android:textColor="@android:color/white"
         android:textSize="@dimen/letter_fonts"
         app:layout_constraintBottom_toTopOf="@+id/guideline9"
         app:layout_constraintEnd_toStartOf="@+id/guideline3"
@@ -220,6 +231,8 @@
         android:gravity="center"
         android:onClick="displayNumber"
         android:text="1"
+        android:background="#172035"
+        android:textColor="@android:color/white"
         android:textSize="@dimen/letter_fonts"
         app:layout_constraintBottom_toTopOf="@+id/guideline2"
         app:layout_constraintEnd_toStartOf="@+id/guideline4"
@@ -233,6 +246,8 @@
         android:gravity="center"
         android:onClick="displayNumber"
         android:text="2"
+        android:background="#172035"
+        android:textColor="@android:color/white"
         android:textSize="@dimen/letter_fonts"
         app:layout_constraintBottom_toTopOf="@+id/guideline2"
         app:layout_constraintEnd_toStartOf="@+id/guideline5"
@@ -246,6 +261,8 @@
         android:gravity="center"
         android:onClick="displayNumber"
         android:text="3"
+        android:background="#172035"
+        android:textColor="@android:color/white"
         android:textSize="@dimen/letter_fonts"
         app:layout_constraintBottom_toTopOf="@+id/guideline2"
         app:layout_constraintEnd_toStartOf="@+id/guideline3"
@@ -256,11 +273,13 @@
         android:id="@+id/work_out_text_view"
         android:layout_width="0dp"
         android:layout_height="50dp"
+        android:background="#404A61"
         android:gravity="bottom|right|end"
         android:lines="1"
         android:maxLines="1"
         android:singleLine="true"
         android:text="@string/initial_value"
+        android:textColor="@android:color/white"
         android:textSize="23sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -270,8 +289,10 @@
         android:id="@+id/results_text_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="#404A61"
         android:gravity="bottom|end"
         android:text="@string/initial_value"
+        android:textColor="@android:color/white"
         android:textSize="50sp"
         app:layout_constraintBottom_toTopOf="@+id/guideline_first"
         app:layout_constraintEnd_toEndOf="parent"
@@ -283,7 +304,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.8" />
+        app:layout_constraintGuide_begin="329dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline4"
@@ -319,6 +340,37 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.67168266" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline2">
+
+        <ImageView
+            android:id="@+id/imageButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:background="#3767FC"
+            android:foregroundGravity="center"
+            android:onClick="equal"
+            app:srcCompat="@drawable/ic_equal" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#DB031D"
+            android:gravity="center"
+            android:onClick="delete"
+            android:text="DEL"
+            android:textColor="@android:color/white"
+            android:textSize="30sp" />
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
